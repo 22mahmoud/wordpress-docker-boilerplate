@@ -1,0 +1,4 @@
+{
+  "$schema": "/usr/lib/phpactor/phpactor.schema.json",
+  "php_code_sniffer.enabled": true
+}

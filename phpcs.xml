@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="MyProjectStandard">
+  <description>The coding standard for PHP_CodeSniffer.</description>
+
+  <arg name="extensions" value="php"/>
+  <arg value="s"/>
+  <arg name="colors"/>
+
+  <file>.</file>
+
+  <exclude-pattern>web/wp/</exclude-pattern>
+  <exclude-pattern>web/index.php</exclude-pattern>
+  <exclude-pattern>web/wp-config.php</exclude-pattern>
+  <exclude-pattern>web/app/mu-plugins/bedrock-autoloader.php</exclude-pattern>
+  <exclude-pattern>web/app/mu-plugins/bedrock-disallow-indexing/</exclude-pattern>
+  <exclude-pattern>web/app/themes/twentytwentyfive/</exclude-pattern>
+
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/*.js</exclude-pattern>
+  <exclude-pattern>*/*.css</exclude-pattern>
+
+
+  <rule ref="PSR12"/>
+  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+    <exclude-pattern>config/application.php</exclude-pattern>
+  </rule>
+
+
+</ruleset>
