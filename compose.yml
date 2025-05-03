@@ -1,0 +1,63 @@
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - .:/var/www
+      - ./docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    environment:
+      GID: 1000
+      UID: 1000
+    networks:
+      - wp-dev
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: docker/common/php-fpm/Dockerfile
+      target: development
+      # target: production
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
+    volumes:
+      # - ./web/app/uploads/:/var/www/web/app/uploads
+      - .:/var/www
+    env_file:
+      - .env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - wp-dev
+
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: db
+      MARIADB_DATABASE: db
+      MARIADB_USER: db
+      MARIADB_PASSWORD: db
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wp-dev
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-pdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # phpmyadmin:
+
+  # composer:
+
+  # pnpm:
+
+volumes:
+  db_data:
+
+networks:
+  wp-dev:
