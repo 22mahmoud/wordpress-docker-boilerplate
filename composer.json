@@ -42,9 +42,8 @@
     "oscarotero/env": "^2.1",
     "roots/bedrock-autoloader": "^1.0",
     "roots/bedrock-disallow-indexing": "^2.0",
-    "roots/wordpress": "6.8",
-    "roots/wp-config": "1.0.0",
-    "wpackagist-theme/twentytwentyfive": "^1.0"
+    "roots/wordpress": "6.8.1",
+    "roots/wp-config": "1.0.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

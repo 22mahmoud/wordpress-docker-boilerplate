@@ -7,7 +7,20 @@ RUN addgroup -g "${GID}" -S fpm \
   && adduser -u "${UID}" -G fpm -S -s /sbin/nologin fpm
 
 RUN sed -i "s/user = www-data/user = fpm/g" /usr/local/etc/php-fpm.d/www.conf \
-  && sed -i "s/group = www-data/group = fpm/g" /usr/local/etc/php-fpm.d/www.conf
+  && sed -i "s/group = www-data/group = fpm/g" /usr/local/etc/php-fpm.d/www.conf \
+  && sed -i 's/;pm.status_path/pm.status_path/' /usr/local/etc/php-fpm.d/www.conf
+
+# Download and install php-fpm health check script
+RUN curl -o /usr/local/bin/php-fpm-healthcheck \
+  https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck \
+  && chmod +x /usr/local/bin/php-fpm-healthcheck
+
+# download Composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
+# Install WP-CLI globally
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+  && chmod +x /usr/local/bin/wp
 
 WORKDIR /var/www
 
@@ -24,9 +37,13 @@ RUN apk add --no-cache --virtual .build-deps \
   # Essentials
   libzip-dev \
   openssl-dev \
+  fcgi \
+  procps  \
   curl \
   git \
   unzip \
+  mysql \
+  mysql-client \
   \
   # language/charset
   oniguruma-dev \
@@ -47,16 +64,13 @@ RUN apk add --no-cache --virtual .build-deps \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-# Copy PHP config INI files
-COPY docker/common/php-fpm/conf.d/opcache.ini /usr/local/etc/php/conf.d/
-COPY docker/common/php-fpm/conf.d/uploads.ini /usr/local/etc/php/conf.d/
-COPY docker/common/php-fpm/conf.d/zz-variables-order.ini /usr/local/etc/php/conf.d/
 
 FROM builder AS development
 
-COPY docker/dev/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/php-fpm/entrypoint.dev.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
 USER fpm
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 9000
@@ -73,23 +87,27 @@ RUN apk add --no-cache \
   freetype \
   libzip \
   zlib \
+  fcgi \
+  procps \
   oniguruma \
   openssl \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
 # Copy PHP extensions and libraries from the builder stage
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
-# Install Composer and dependencies
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-
+# Install Composer dependencies
 COPY composer.json composer.lock ./
-RUN composer install \
-  --no-dev --optimize-autoloader --classmap-authoritative --no-interaction --no-progress --prefer-dist
+RUN --mount=type=cache,target=/root/.composer \
+  composer install \
+  --no-dev \
+  --optimize-autoloader \
+  --classmap-authoritative \
+  --no-interaction \
+  --no-progress \
+  --prefer-dist
 
 COPY . .
 RUN composer dump-autoload -o \
@@ -97,6 +115,13 @@ RUN composer dump-autoload -o \
 
 RUN chown -R fpm:fpm .
 
+COPY docker/php-fpm/entrypoint.prod.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
+
 USER fpm
+ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 9000
 CMD ["php-fpm"]
