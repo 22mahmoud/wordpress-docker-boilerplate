@@ -67,8 +67,8 @@ services:
   skin-theme:
     build:
       context: .
-      dockerfile: docker/workspace/Dockerfile
-      target: node
+      dockerfile: docker/node/Dockerfile
+      target: base
       args:
         - "UID=${UID:-1000}"
         - "GID=${GID:-1000}"
