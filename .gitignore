@@ -28,3 +28,4 @@ auth.json
 wp-cli.local.yml
 
 certs
+.pnpm-store
