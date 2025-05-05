@@ -1,13 +1,15 @@
 services:
   nginx:
-    image: nginx:latest
-    volumes:
-      - .:/var/www
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
     ports:
       - 8080:80
     networks:
-      - wp-dev
+      - wp-prod
+    volumes:
+      - web_code:/var/www/web:ro
+      - wp_uploads:/var/www/web/app/uploads:ro
     depends_on:
       php-fpm:
         condition: service_healthy
@@ -16,12 +18,13 @@ services:
     build:
       context: .
       dockerfile: docker/php-fpm/Dockerfile
-      target: development
+      target: production
       args:
         - "UID=${UID:-1000}"
         - "GID=${GID:-1000}"
     volumes:
-      - .:/var/www
+      - web_code:/var/www/web
+      - wp_uploads:/var/www/web/app/uploads
     env_file:
       - .env
     healthcheck:
@@ -33,7 +36,7 @@ services:
       mariadb:
         condition: service_healthy
     networks:
-      - wp-dev
+      - wp-prod
 
   mariadb:
     image: mariadb:latest
@@ -43,49 +46,20 @@ services:
       MARIADB_USER: db
       MARIADB_PASSWORD: db
     volumes:
-      - db_data:/var/lib/mysql
+      - prod_db_data:/var/lib/mysql
     networks:
-      - wp-dev
+      - wp-prod
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-pdb"]
-      interval: 10s
+      interval: 20s
       timeout: 5s
       retries: 5
       start_period: 30s
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - 8081:80
-    environment:
-      PMA_HOST: mariadb
-    depends_on:
-      - mariadb
-    networks:
-      - wp-dev
-
-  skin-theme:
-    build:
-      context: .
-      dockerfile: docker/workspace/Dockerfile
-      target: node
-      args:
-        - "UID=${UID:-1000}"
-        - "GID=${GID:-1000}"
-    volumes:
-      - .:/var/www
-    working_dir: /var/www/web/app/themes/skin
-    command: sh -c "pnpm install && pnpm run dev"
-    env_file:
-      - .env
-    ports:
-      - "5173:5173"
-    networks:
-      - wp-dev
-
 volumes:
-  db_data:
+  prod_db_data:
   wp_uploads:
+  web_code:
 
 networks:
-  wp-dev:
+  wp-prod:

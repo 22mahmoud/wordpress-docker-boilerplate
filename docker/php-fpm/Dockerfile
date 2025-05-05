@@ -67,10 +67,13 @@ RUN apk add --no-cache --virtual .build-deps \
 
 FROM builder AS development
 
-COPY docker/php-fpm/entrypoint.dev.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
+
+COPY docker/php-fpm/entrypoint.dev.sh /usr/local/bin/entrypoint.sh
+COPY docker/php-fpm/entrypoint.common.sh /usr/local/bin/entrypoint.common.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.common.sh
+
 USER fpm
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 9000
@@ -91,6 +94,8 @@ RUN apk add --no-cache \
   procps \
   oniguruma \
   openssl \
+  mysql \
+  mysql-client \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
@@ -107,19 +112,22 @@ RUN --mount=type=cache,target=/root/.composer \
   --classmap-authoritative \
   --no-interaction \
   --no-progress \
-  --prefer-dist
+  --prefer-dist \
+  && rm /usr/local/bin/composer
 
 COPY . .
-RUN composer dump-autoload -o \
-  && rm /usr/local/bin/composer
+COPY --from=skin-theme-final:latest /app/dist /var/www/web/app/themes/skin/dist/
+RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
 
 RUN chown -R fpm:fpm .
 
-COPY docker/php-fpm/entrypoint.prod.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
+
+COPY docker/php-fpm/entrypoint.prod.sh /usr/local/bin/entrypoint.sh
+COPY docker/php-fpm/entrypoint.common.sh /usr/local/bin/entrypoint.common.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.common.sh
 
 USER fpm
 ENTRYPOINT ["entrypoint.sh"]

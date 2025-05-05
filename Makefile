@@ -1,5 +1,5 @@
 dev:
-	$(MAKE) up-dev composer-install-dev
+	$(MAKE) build-dev up-dev
 
 build-dev:
 	@docker compose -f compose.dev.yml build
@@ -10,10 +10,20 @@ up-dev:
 down-dev:
 	@docker compose -f compose.dev.yml down
 
-composer-install-dev:
-	@docker compose -f compose.dev.yml exec -it workspace bash -c "composer install"
-
 workspace-dev:
 	@docker compose -f compose.dev.yml exec -it workspace bash
 
-.PHONY: dev build-dev up-dev composer-install-dev workspace
+prod:
+	$(MAKE) build-prod up-prod
+
+build-prod:
+	@docker build -f docker/node/Dockerfile -t skin-theme-final:latest .
+	@docker compose -f compose.prod.yml build
+
+up-prod:
+	@docker compose -f compose.prod.yml up -d
+
+down-prod:
+	@docker compose -f compose.prod.yml down
+
+.PHONY: dev build-dev up-dev workspace-dev build-prod up-prod down-prod

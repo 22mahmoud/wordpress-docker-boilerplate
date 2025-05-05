@@ -1,21 +1,15 @@
 #!/bin/sh
 set -e
 
-# Install WP if not yet installed
-if ! wp core is-installed; then
-  echo "🚀 Installing WordPress..."
-  wp core install \
-    --url="$WP_HOME" \
-    --title="$WP_TITLE" \
-    --admin_user="$WP_USER" \
-    --admin_password="$WP_PASSWORD" \
-    --admin_email="$WP_EMAIL"
-fi
+echo "🏁 production entrypoint starting..."
 
-echo "🔌 Activating all plugins..."
-wp plugin activate --all
+. /usr/local/bin/entrypoint.common.sh
 
-echo "🎨 Activating Skin theme..."
-wp theme activate skin
+echo "🔄 Running WordPress database updates..."
+wp core update-db
 
+echo "🧹 Flushing WordPress cache..."
+wp cache flush
+
+echo "✅ Production entrypoint finished. Starting PHP-FPM..."
 exec "$@"
