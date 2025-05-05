@@ -1,9 +1,13 @@
+web/app/uploads
 .phpactor.json
+phpcs.xml
+./bin
 .nvimrc.lua
 LICENSE*
 README.md
 .env.example
-web/app/uploads
+Makefile
+**/.pnpm-store
 **/certs
 **/.dockerignore
 **/.env

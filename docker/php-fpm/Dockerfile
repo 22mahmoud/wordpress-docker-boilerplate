@@ -115,11 +115,11 @@ RUN --mount=type=cache,target=/root/.composer \
   --prefer-dist \
   && rm /usr/local/bin/composer
 
+RUN rm -vrf html
 COPY . .
+RUN rm -vrf docker
 COPY --from=skin-theme-final:latest /app/dist /var/www/web/app/themes/skin/dist/
 RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
-
-RUN chown -R fpm:fpm .
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini

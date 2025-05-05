@@ -1,29 +1,44 @@
-dev:
-	$(MAKE) build-dev up-dev
+DEV_COMPOSE  = compose.dev.yml
+PROD_COMPOSE = compose.prod.yml
+
+THEME_IMAGE = skin-theme-final:latest
+
+## ---------- Development ----------
+dev: build-dev up-dev
 
 build-dev:
-	@docker compose -f compose.dev.yml build
+	@docker compose -f $(DEV_COMPOSE) build
 
 up-dev:
-	@docker compose -f compose.dev.yml up -d
+	@docker compose -f $(DEV_COMPOSE) up -d
 
 down-dev:
-	@docker compose -f compose.dev.yml down
+	@docker compose -f $(DEV_COMPOSE) down
+
+logs-dev:
+	@docker compose -f $(DEV_COMPOSE) logs -f
 
 workspace-dev:
-	@docker compose -f compose.dev.yml exec -it workspace bash
+	@docker compose -f $(DEV_COMPOSE) exec workspace bash
 
-prod:
-	$(MAKE) build-prod up-prod
+## ---------- Production ----------
+prod: build-prod up-prod
 
 build-prod:
-	@docker build -f docker/node/Dockerfile -t skin-theme-final:latest .
-	@docker compose -f compose.prod.yml build
+	@echo "Building theme image: $(THEME_IMAGE)"
+	@docker build -f docker/node/Dockerfile -t $(THEME_IMAGE) .
+	@docker compose -f $(PROD_COMPOSE) build
 
 up-prod:
-	@docker compose -f compose.prod.yml up -d
+	@docker compose -f $(PROD_COMPOSE) up -d --remove-orphans
 
 down-prod:
-	@docker compose -f compose.prod.yml down
+	@docker compose -f $(PROD_COMPOSE) down
 
-.PHONY: dev build-dev up-dev workspace-dev build-prod up-prod down-prod
+logs-prod:
+	@docker compose -f $(PROD_COMPOSE) logs -f
+
+## ---------- Utilities ----------
+down: down-dev down-prod
+
+.PHONY: dev build-dev up-dev workspace-dev logs-dev build-prod up-prod down-prod logs-prod

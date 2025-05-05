@@ -10,6 +10,7 @@ services:
     volumes:
       - web_code:/var/www/web:ro
       - wp_uploads:/var/www/web/app/uploads:ro
+    restart: unless-stopped
     depends_on:
       php-fpm:
         condition: service_healthy
@@ -23,10 +24,11 @@ services:
         - "UID=${UID:-1000}"
         - "GID=${GID:-1000}"
     volumes:
-      - web_code:/var/www/web
+      - web_code:/var/www/web:ro
       - wp_uploads:/var/www/web/app/uploads
     env_file:
       - .env
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
       interval: 10s
@@ -45,6 +47,7 @@ services:
       MARIADB_DATABASE: db
       MARIADB_USER: db
       MARIADB_PASSWORD: db
+    restart: unless-stopped
     volumes:
       - prod_db_data:/var/lib/mysql
     networks:
