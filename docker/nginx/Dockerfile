@@ -1,6 +1,9 @@
-FROM nginxinc/nginx-unprivileged:alpine
+FROM nginx:alpine
+
+WORKDIR /var/www/web
+
+RUN rm -rf /etc/nginx/conf.d/*
 
 COPY ./docker/nginx/nginx.prod.conf /etc/nginx/nginx.conf
 
-WORKDIR /var/www/web
-EXPOSE 80
+COPY --from=php-production /var/www/web .

@@ -8,7 +8,7 @@
 </head>
 
 <body <?php body_class(); ?>>
-    <div class="text-xl"> Hello World!!! </div>
+    <div class="text-xl">Mahmoud Ashraf!</div>
         <?php while (have_posts()) { ?>
             <?php the_post(); ?>
             <div> <?php the_title(); ?> </div>

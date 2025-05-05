@@ -27,6 +27,11 @@ prod: build-prod up-prod
 build-prod:
 	@echo "Building theme image: $(THEME_IMAGE)"
 	@docker build -f docker/node/Dockerfile -t $(THEME_IMAGE) .
+
+	@echo "Building wordpres image"
+	@docker build -f docker/php-fpm/Dockerfile -t php-production:latest \
+		--target production .
+
 	@docker compose -f $(PROD_COMPOSE) build
 
 up-prod:

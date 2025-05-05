@@ -4,11 +4,10 @@ services:
       context: .
       dockerfile: docker/nginx/Dockerfile
     ports:
-      - 8080:80
+      - 8080:8080
     networks:
       - wp-prod
     volumes:
-      - web_code:/var/www/web:ro
       - wp_uploads:/var/www/web/app/uploads:ro
     restart: unless-stopped
     depends_on:
@@ -24,7 +23,6 @@ services:
         - "UID=${UID:-1000}"
         - "GID=${GID:-1000}"
     volumes:
-      - web_code:/var/www/web:ro
       - wp_uploads:/var/www/web/app/uploads
     env_file:
       - .env
@@ -41,7 +39,7 @@ services:
       - wp-prod
 
   mariadb:
-    image: mariadb:latest
+    image: yobasystems/alpine-mariadb:latest
     environment:
       MARIADB_ROOT_PASSWORD: db
       MARIADB_DATABASE: db
@@ -62,7 +60,6 @@ services:
 volumes:
   prod_db_data:
   wp_uploads:
-  web_code:
 
 networks:
   wp-prod:

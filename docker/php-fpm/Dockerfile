@@ -115,9 +115,9 @@ RUN --mount=type=cache,target=/root/.composer \
   --prefer-dist \
   && rm /usr/local/bin/composer
 
-RUN rm -vrf html
+RUN rm -rf html
 COPY . .
-RUN rm -vrf docker
+RUN rm -rf docker
 COPY --from=skin-theme-final:latest /app/dist /var/www/web/app/themes/skin/dist/
 RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
 
