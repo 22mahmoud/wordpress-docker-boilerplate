@@ -1,3 +1,20 @@
 <?php ?>
+<!doctype html>
+<html lang="<?php language_attributes(); ?>">
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php wp_head(); ?>
+</head>
 
-<div class="text-xl"> Hello World! </div>
+<body <?php body_class(); ?>>
+    <div class="text-xl"> Hello World!!! </div>
+        <?php while (have_posts()) { ?>
+            <?php the_post(); ?>
+            <div> <?php the_title(); ?> </div>
+            <div> <?php the_content(); ?> </div>
+        <?php } ?>
+    <?php wp_footer(); ?>
+</body>
+
+</html>
