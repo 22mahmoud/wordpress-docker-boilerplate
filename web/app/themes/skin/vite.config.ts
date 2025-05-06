@@ -1,9 +1,7 @@
 import path from "node:path";
-import laravel from "laravel-vite-plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [laravel({ input: ["./resources/js/app.ts"] })],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "resources"),
@@ -13,18 +11,25 @@ export default defineConfig({
     assetsDir: ".",
     outDir: "dist",
     emptyOutDir: true,
+    manifest: true,
+    rollupOptions: {
+      input: {
+        app: "./resources/js/app.ts",
+      },
+
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+        entryFileNames: "[name].[hash].js",
+        chunkFileNames: "[name].[hash].js",
+        assetFileNames: "[name].[hash].[ext]",
+      },
+    },
   },
   server: {
     host: "0.0.0.0",
-    port: 5173,
-    strictPort: true,
-    hmr: {
-      host: "localhost",
-      port: 5173,
-      protocol: "ws",
-    },
-    cors: {
-      origin: "*",
-    },
   },
 });

@@ -25,6 +25,11 @@
     "lint": "phpcs",
     "lint:fix": "phpcbf"
   },
+  "autoload": {
+    "psr-4": {
+      "WP\\Skin\\": "web/app/themes/skin/src/"
+    }
+  },
   "repositories": [
     {
       "type": "composer",

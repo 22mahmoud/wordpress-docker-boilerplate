@@ -112,12 +112,14 @@ RUN --mount=type=cache,target=/root/.composer \
   --classmap-authoritative \
   --no-interaction \
   --no-progress \
-  --prefer-dist \
-  && rm /usr/local/bin/composer
+  --prefer-dist
+
 
 RUN rm -rf html
 COPY . .
 RUN rm -rf docker
+RUN composer dump-autoload -o \
+  && rm /usr/local/bin/composer
 COPY --from=skin-theme-final:latest /app/dist /var/www/web/app/themes/skin/dist/
 RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
 
