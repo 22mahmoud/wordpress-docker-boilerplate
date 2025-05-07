@@ -21,8 +21,8 @@ class Theme
     private function initVite(): void
     {
         $this->vite = new Vite(
-            "resources/js/app.ts",
-            'dist',
+            distPath: 'dist',
+            entry: "resources/js/app.ts",
         );
     }
 

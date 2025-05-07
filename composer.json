@@ -52,7 +52,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "squizlabs/php_codesniffer": "*"
+    "squizlabs/php_codesniffer": "*",
+    "wpackagist-plugin/query-monitor": "^3.17"
   },
   "config": {
     "optimize-autoloader": true,

@@ -6,13 +6,13 @@ namespace WP\Skin\Includes;
 
 class Vite
 {
-    private string $host = "http://localhost:5173";
     private string $distUrl;
     private string $manifestPath;
 
     public function __construct(
         private string $entry,
         private string $distPath,
+        private string $host = "http://localhost:5173",
     ) {
         $this->distUrl = sprintf("%s/%s", get_template_directory_uri(), $this->distPath);
         $this->manifestPath = sprintf(
