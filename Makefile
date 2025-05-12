@@ -18,8 +18,8 @@ down-dev:
 logs-dev:
 	@docker compose -f $(DEV_COMPOSE) logs -f
 
-workspace-dev:
-	@docker compose -f $(DEV_COMPOSE) exec workspace bash
+node-dev:
+	@docker compose -f $(DEV_COMPOSE) exec node sh
 
 ## ---------- Production ----------
 prod: build-prod up-prod
@@ -46,4 +46,4 @@ logs-prod:
 ## ---------- Utilities ----------
 down: down-dev down-prod
 
-.PHONY: dev build-dev up-dev workspace-dev logs-dev build-prod up-prod down-prod logs-prod
+.PHONY: dev build-dev up-dev node-dev logs-dev build-prod up-prod down-prod logs-prod

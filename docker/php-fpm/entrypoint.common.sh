@@ -1,11 +1,34 @@
 #!/bin/sh
 
-# Wait for DB to be available
-until wp db check >/dev/null 2>&1; do
-  echo "⏳ Waiting for the database to be ready..."
-  sleep 1
-done
-echo "✅ Database is ready!"
+MAX_RETRIES=20
+RETRY_DELAY=1
+
+retry() {
+  cmd="$1"
+  label="$2"
+  attempt=1
+
+  until eval "$cmd" >/dev/null 2>&1; do
+    echo "⏳ Waiting for $label... ($attempt/$MAX_RETRIES)"
+    if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+      echo "❌ $label not available after $MAX_RETRIES attempts. Exiting."
+      exit 1
+    fi
+    attempt=$((attempt + 1))
+    sleep "$RETRY_DELAY"
+  done
+
+  echo "✅ $label is ready!"
+}
+
+# Wait for Redis
+# retry "wp redis status" "Redis"
+
+# Enable Redis
+# wp redis enable
+
+# Wait for Database
+retry "wp db check" "Database"
 
 # Install WP if not yet installed
 if ! wp core is-installed; then

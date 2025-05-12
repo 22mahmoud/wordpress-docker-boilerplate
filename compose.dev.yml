@@ -1,9 +1,26 @@
+x-node: &node
+  build:
+    context: .
+    dockerfile: docker/node/Dockerfile
+    target: base
+    args:
+      - "UID=${UID:-1000}"
+      - "GID=${GID:-1000}"
+  volumes:
+    - .:/var/www
+  working_dir: /var/www/
+  env_file:
+    - .env
+  networks:
+    - wp-dev
+
 services:
   nginx:
     image: nginx:latest
     volumes:
       - .:/var/www
       - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - wp_uploads:/var/www/web/app/uploads:ro
     ports:
       - 8080:80
     networks:
@@ -22,6 +39,7 @@ services:
         - "GID=${GID:-1000}"
     volumes:
       - .:/var/www
+      - wp_uploads:/var/www/web/app/uploads
     env_file:
       - .env
     healthcheck:
@@ -64,24 +82,28 @@ services:
     networks:
       - wp-dev
 
-  skin-theme:
-    build:
-      context: .
-      dockerfile: docker/node/Dockerfile
-      target: base
-      args:
-        - "UID=${UID:-1000}"
-        - "GID=${GID:-1000}"
-    volumes:
-      - .:/var/www
-    working_dir: /var/www/web/app/themes/skin
-    command: sh -c "pnpm install && pnpm run dev"
-    env_file:
-      - .env
-    ports:
-      - "5173:5173"
+  redis:
+    image: redis:8.0-alpine
+    restart: unless-stopped
     networks:
       - wp-dev
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  node:
+    <<: *node
+    tty: true
+    stdin_open: true
+
+  skin-theme:
+    <<: *node
+    working_dir: /var/www/web/app/themes/skin
+    command: sh -c "pnpm install && pnpm run dev"
+    ports:
+      - "5173:5173"
 
 volumes:
   db_data:
