@@ -22,10 +22,10 @@ retry() {
 }
 
 # Wait for Redis
-# retry "wp redis status" "Redis"
+retry "wp redis status" "Redis"
 
 # Enable Redis
-# wp redis enable
+wp redis enable
 
 # Wait for Database
 retry "wp db check" "Database"

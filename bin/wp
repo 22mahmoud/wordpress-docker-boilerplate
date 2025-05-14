@@ -1,0 +1,6 @@
+#!/bin/sh
+
+COMPOSE_FILE="compose.dev.yml"
+PHP_SERVICE_NAME="php-fpm"
+
+docker compose -f "${COMPOSE_FILE}" exec -it "${PHP_SERVICE_NAME}" wp "$@"

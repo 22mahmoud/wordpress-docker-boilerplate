@@ -62,11 +62,21 @@ RUN apk add --no-cache --virtual .build-deps \
   zip \
   opcache \
   \
+  # phpredis
+  && pecl install redis \
+  && docker-php-ext-enable redis \
+  \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
 
 FROM builder AS development
 
+# Install Xdebug
+RUN apk add --no-cache linux-headers \
+  && pecl install xdebug \
+  && docker-php-ext-enable xdebug
+
+COPY docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
 
 COPY docker/php-fpm/entrypoint.dev.sh /usr/local/bin/entrypoint.sh

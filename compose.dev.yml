@@ -50,6 +50,8 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - wp-dev
 
@@ -85,13 +87,17 @@ services:
   redis:
     image: redis:8.0-alpine
     restart: unless-stopped
+    volumes:
+      - redis_data:/data
     networks:
       - wp-dev
+    command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 5s
 
   node:
     <<: *node
@@ -107,6 +113,7 @@ services:
 
 volumes:
   db_data:
+  redis_data:
   wp_uploads:
 
 networks:

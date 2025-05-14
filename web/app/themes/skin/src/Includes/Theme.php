@@ -11,6 +11,7 @@ class Theme
     {
         $this->initVite();
         add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
+        add_action('admin_head', [$this, 'adminStyleOverride']);
     }
 
     public function enqueueAssets(): void
@@ -24,6 +25,11 @@ class Theme
             distPath: 'dist',
             entry: "resources/js/app.ts",
         );
+    }
+
+    public function adminStyleOverride(): void
+    {
+        echo '<style>#rediscache .sidebar-column { display: none !important; }</style>';
     }
 
     public static function init(): Theme
