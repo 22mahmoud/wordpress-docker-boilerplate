@@ -131,8 +131,8 @@ RUN rm -rf docker
 RUN composer dump-autoload -o \
   && rm /usr/local/bin/composer
 
-COPY --from=frontend-final:latest /app/web/app/themes/skin/dist /var/www/web/app/themes/skin/dist/
-COPY --from=frontend-final:latest /app/web/app/plugins/blocks/build /var/www/web/app/plugins/blocks/build/
+COPY --from=ghcr.io/22mahmoud/frontend-final:latest /app/web/app/themes/skin/dist /var/www/web/app/themes/skin/dist/
+COPY --from=ghcr.io/22mahmoud/frontend-final:latest /app/web/app/plugins/blocks/build /var/www/web/app/plugins/blocks/build/
 
 RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
 

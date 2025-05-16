@@ -1,8 +1,6 @@
 services:
   nginx:
-    build:
-      context: .
-      dockerfile: docker/nginx/Dockerfile
+    image: ghcr.io/22mahmoud/nginx-production:latest
     ports:
       - 8080:8080
     networks:
@@ -15,18 +13,60 @@ services:
         condition: service_healthy
 
   php-fpm:
-    build:
-      context: .
-      dockerfile: docker/php-fpm/Dockerfile
-      target: production
-      args:
-        - "UID=${UID:-1000}"
-        - "GID=${GID:-1000}"
+    image: ghcr.io/22mahmoud/php-production:latest
     volumes:
       - wp_uploads:/var/www/web/app/uploads
-    env_file:
-      - .env
     restart: unless-stopped
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+
+      WP_ENV: ${WP_ENV:-production}
+      WP_HOME: ${COOLIFY_FQDN}
+      WP_SITEURL: ${COOLIFY_FQDN}/wp
+
+      WP_REDIS_HOST: ${WP_REDIS_HOST:-redis}
+      WP_REDIS_PORT: ${WP_REDIS_PORT:-6379}
+      WP_REDIS_PREFIX: ${WP_REDIS_PREFIX}
+      # WP_REDIS_PASSWORD:
+      WP_REDIS_DATABASE: ${WP_REDIS_DATABASE:-0}
+      WP_REDIS_TIMEOUT: ${WP_REDIS_TIMEOUT:-1}
+      WP_REDIS_READ_TIMEOUT: ${WP_REDIS_READ_TIMEOUT:-1}
+      WP_REDIS_CLIENT: ${WP_REDIS_CLIENT:-phpredis}
+
+      AUTH_KEY: ${AUTH_KEY}
+      SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
+      LOGGED_IN_KEY: ${LOGGED_IN_KEY}
+      NONCE_KEY: ${NONCE_KEY}
+      AUTH_SALT: ${AUTH_SALT}
+      SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
+      LOGGED_IN_SALT: ${LOGGED_IN_SALT}
+      NONCE_SALT: ${NONCE_SALT}
+
+      UID: ${UID:-1000}
+      GID: ${GID:-1000}
+
+      WP_TITLE: ${WP_TITLE:-Mahmoud Ashraf}
+      WP_USER: ${WP_USER:-admin}
+      WP_PASSWORD: ${WP_PASSWORD:-1234}
+      WP_EMAIL: ${WP_EMAIL:-admin@example.com}
+      DISABLE_PLUGINS: ${DISABLE_PLUGINS}
+
+      PHP_VARIABLES_ORDER: ${PHP_VARIABLES_ORDER:-EGPCS}
+      PHP_FILE_UPLOADS: ${PHP_FILE_UPLOADS:-On}
+      PHP_UPLOAD_MAX_FILESIZE: ${PHP_UPLOAD_MAX_FILESIZE:-50M}
+      PHP_POST_MAX_SIZE: ${PHP_POST_MAX_SIZE:-80M}
+      OPCACHE_ENABLE: ${OPCACHE_ENABLE:-1}
+      OPCACHE_ENABLE_CLI: ${OPCACHE_ENABLE_CLI:-0}
+      OPCACHE_MEMORY_CONSUMPTION: ${OPCACHE_MEMORY_CONSUMPTION:-128}
+      OPCACHE_INTERNED_STRINGS_BUFFER: ${OPCACHE_INTERNED_STRINGS_BUFFER:-16}
+      OPCACHE_MAX_ACCELERATED_FILES: ${OPCACHE_MAX_ACCELERATED_FILES:-10000}
+      OPCACHE_REVALIDATE_FREQ: ${OPCACHE_REVALIDATE_FREQ:-60}
+      OPCACHE_VALIDATE_TIMESTAMPS: ${OPCACHE_VALIDATE_TIMESTAMPS:-0}
+      OPCACHE_SAVE_COMMENTS: ${OPCACHE_SAVE_COMMENTS:-1}
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
       interval: 10s
@@ -43,10 +83,10 @@ services:
   mariadb:
     image: yobasystems/alpine-mariadb:latest
     environment:
-      MARIADB_ROOT_PASSWORD: db
-      MARIADB_DATABASE: db
-      MARIADB_USER: db
-      MARIADB_PASSWORD: db
+      MARIADB_ROOT_PASSWORD: ${DB_NAME}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
     restart: unless-stopped
     volumes:
       - prod_db_data:/var/lib/mysql
