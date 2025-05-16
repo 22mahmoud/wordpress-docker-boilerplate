@@ -37,11 +37,9 @@ jobs:
 
       - name: Push Images
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/frontend-final:latest
           docker push ghcr.io/${{ github.repository_owner }}/php-production:latest
           docker push ghcr.io/${{ github.repository_owner }}/nginx-production:latest
 
-      - name: Trigger Coolify Deployment
+      - name: Deploy to Coolify
         run: |
-          curl -X POST https://app.coolify.io/api/deploy/YOUR_APP_ID \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_KEY }}"
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
