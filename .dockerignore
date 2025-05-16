@@ -1,4 +1,6 @@
 web/app/uploads
+web/app/plugins/query-monitor
+web/app/plugins/redis-cache
 .phpactor.json
 phpcs.xml
 ./bin

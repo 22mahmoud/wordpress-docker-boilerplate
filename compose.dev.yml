@@ -104,10 +104,9 @@ services:
     tty: true
     stdin_open: true
 
-  skin-theme:
+  frontend:
     <<: *node
-    working_dir: /var/www/web/app/themes/skin
-    command: sh -c "pnpm install && pnpm run dev"
+    command: sh -c "pnpm install && pnpm run -r start"
     ports:
       - "5173:5173"
 

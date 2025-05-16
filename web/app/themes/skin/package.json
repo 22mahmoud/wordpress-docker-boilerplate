@@ -2,10 +2,9 @@
   "name": "skin",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build"
   },
   "keywords": [],
@@ -13,6 +12,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/alpinejs": "^3.13.11",
     "@types/node": "^22.15.3",
     "laravel-vite-plugin": "^1.2.0",

@@ -31,3 +31,4 @@ wp-cli.local.yml
 
 certs
 .pnpm-store
+node_modules

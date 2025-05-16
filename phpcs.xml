@@ -21,11 +21,7 @@
   <exclude-pattern>*/*.css</exclude-pattern>
 
 
-  <rule ref="PSR12"></rule>
-
-  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-    <exclude-pattern>config/application.php</exclude-pattern>
+  <rule ref="PSR12">
+    <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
   </rule>
-
-
 </ruleset>

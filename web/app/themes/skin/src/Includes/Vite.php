@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace WP\Skin\Includes;
 
+use function Env\env;
+
 class Vite
 {
     private string $distUrl;

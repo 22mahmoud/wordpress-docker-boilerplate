@@ -1,7 +1,7 @@
 DEV_COMPOSE  = compose.dev.yml
 PROD_COMPOSE = compose.prod.yml
 
-THEME_IMAGE = skin-theme-final:latest
+FRONTEND_IMAGE = frontend-final:latest
 
 ## ---------- Development ----------
 dev: build-dev up-dev
@@ -25,8 +25,8 @@ node-dev:
 prod: build-prod up-prod
 
 build-prod:
-	@echo "Building theme image: $(THEME_IMAGE)"
-	@docker build -f docker/node/Dockerfile -t $(THEME_IMAGE) .
+	@echo "Building theme image: $(FRONTEND_IMAGE)"
+	@docker build -f docker/node/Dockerfile -t $(FRONTEND_IMAGE) .
 
 	@echo "Building wordpres image"
 	@docker build -f docker/php-fpm/Dockerfile -t php-production:latest \
