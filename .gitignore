@@ -6,6 +6,7 @@ web/app/themes/twentytwentyfive/
 web/app/upgrade
 web/app/uploads/*
 !web/app/uploads/.gitkeep
+!web/app/plugins/blocks
 web/app/cache/*
 web/app/db.php
 web/app/object-cache.php
