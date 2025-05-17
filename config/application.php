@@ -146,6 +146,8 @@ Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?? true);
 // Disable script concatenation
 Config::define('CONCATENATE_SCRIPTS', false);
 
+Config::define('WP_ALLOW_REPAIR', true);
+
 /**
  * Debugging Settings
  */
