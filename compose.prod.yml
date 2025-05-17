@@ -1,10 +1,9 @@
 services:
   nginx:
     image: ghcr.io/22mahmoud/nginx-production:latest
+    container_name: nginx
     ports:
       - 8080:8080
-    networks:
-      - wp-prod
     volumes:
       - wp_uploads:/var/www/web/app/uploads:ro
     restart: unless-stopped
@@ -14,6 +13,7 @@ services:
 
   php-fpm:
     image: ghcr.io/22mahmoud/php-production:latest
+    container_name: php-fpm
     volumes:
       - wp_uploads:/var/www/web/app/uploads
     restart: unless-stopped
@@ -77,10 +77,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - wp-prod
 
   mariadb:
+    container_name: mariadb
     image: yobasystems/alpine-mariadb:latest
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_NAME}
@@ -90,8 +89,6 @@ services:
     restart: unless-stopped
     volumes:
       - prod_db_data:/var/lib/mysql
-    networks:
-      - wp-prod
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-pdb"]
       interval: 20s
@@ -100,12 +97,11 @@ services:
       start_period: 30s
 
   redis:
+    container_name: redis
     image: redis:8.0-alpine
     restart: unless-stopped
     volumes:
       - prod_redis_data:/data
-    networks:
-      - wp-prod
     command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -119,6 +115,3 @@ volumes:
   prod_redis_data:
   prod_db_data:
   wp_uploads:
-
-networks:
-  wp-prod:
