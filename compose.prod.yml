@@ -25,8 +25,8 @@ services:
       DB_PORT: ${DB_PORT}
 
       WP_ENV: ${WP_ENV:-production}
-      WP_HOME: ${COOLIFY_FQDN}
-      WP_SITEURL: ${COOLIFY_FQDN}/wp
+      WP_HOME: ${WP_HOME}
+      WP_SITEURL: ${WP_HOME}/wp
 
       WP_REDIS_HOST: ${WP_REDIS_HOST:-redis}
       WP_REDIS_PORT: ${WP_REDIS_PORT:-6379}
