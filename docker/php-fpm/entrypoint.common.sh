@@ -4,18 +4,18 @@ MAX_RETRIES=20
 RETRY_DELAY=1
 
 # Wait for Database
-for attempt in $(seq 1 $MAX_RETRIES); do
-  if wp db check >/dev/null 2>&1; then
-    echo "✅ Database is ready!"
-    break
-  fi
-  echo "⏳ Waiting for Database... ($attempt/$MAX_RETRIES)"
-  if [ "$attempt" -eq "$MAX_RETRIES" ]; then
-    echo "❌ Database not available after $MAX_RETRIES attempts. Exiting."
-    exit 1
-  fi
-  sleep "$RETRY_DELAY"
-done
+# for attempt in $(seq 1 $MAX_RETRIES); do
+#   if wp db check >/dev/null 2>&1; then
+#     echo "✅ Database is ready!"
+#     break
+#   fi
+#   echo "⏳ Waiting for Database... ($attempt/$MAX_RETRIES)"
+#   if [ "$attempt" -eq "$MAX_RETRIES" ]; then
+#     echo "❌ Database not available after $MAX_RETRIES attempts. Exiting."
+#     exit 1
+#   fi
+#   sleep "$RETRY_DELAY"
+# done
 
 # Install WP if not yet installed
 if ! wp core is-installed; then
@@ -26,6 +26,8 @@ if ! wp core is-installed; then
     --admin_user="$WP_USER" \
     --admin_password="$WP_PASSWORD" \
     --admin_email="$WP_EMAIL"
+else
+  echo "✅ WordPress already installed."
 fi
 
 echo "🔌 Activating all plugins (excluding: $DISABLE_PLUGINS)..."
