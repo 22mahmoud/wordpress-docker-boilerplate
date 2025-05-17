@@ -16,17 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -34,38 +23,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/node/Dockerfile
-          push: false
-          tags: ghcr.io/${{ github.repository_owner }}/frontend-final:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Build frontend
+        run: |
+          docker build -f docker/node/Dockerfile -t ghcr.io/${{ github.repository_owner }}/frontend-final:latest .
 
-      - name: Build and Push PHP (Production)
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/php-fpm/Dockerfile
-          push: true
-          target: production
-          tags: ghcr.io/${{ github.repository_owner }}/php-production:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Build PHP
+        run: |
+          docker build -f docker/php-fpm/Dockerfile -t ghcr.io/${{ github.repository_owner }}/php-production:latest --target production .
 
-      - name: Build and Push Nginx
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/nginx/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/nginx-production:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Build Nginx
+        run: |
+          docker build -f docker/nginx/Dockerfile -t ghcr.io/${{ github.repository_owner }}/nginx-production:latest .
+
+      - name: Push Images
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/php-production:latest
+          docker push ghcr.io/${{ github.repository_owner }}/nginx-production:latest
 
       - name: Deploy to Coolify
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' \
-               --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
