@@ -9,8 +9,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: read
+      packages: write
 
     env:
       REGISTRY: ghcr.io
@@ -18,40 +18,51 @@ jobs:
       TAG: ${{ github.sha }}
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend
-        run: |
-          docker build -f docker/node/Dockerfile -t ghcr.io/${{ github.repository_owner }}/frontend-final:latest .
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/node/Dockerfile
+          push: true
+          tags: ghcr.io/${{ env.REPO_OWNER }}/frontend-final:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build PHP Image
-        run: |
-          docker build -f docker/php-fpm/Dockerfile \
-            -t $REGISTRY/$REPO_OWNER/php-production:$TAG \
-            -t $REGISTRY/$REPO_OWNER/php-production:latest \
-            --target production .
+      - name: Build and push php-fpm
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/php-fpm/Dockerfile
+          target: production
+          push: true
+          tags: ghcr.io/${{ env.REPO_OWNER }}/php-production:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build Nginx Image
-        run: |
-          docker build -f docker/nginx/Dockerfile \
-            -t $REGISTRY/$REPO_OWNER/nginx-production:$TAG \
-            -t $REGISTRY/$REPO_OWNER/nginx-production:latest .
-
-      - name: Push Images
-        run: |
-          docker push $REGISTRY/$REPO_OWNER/php-production:$TAG
-          docker push $REGISTRY/$REPO_OWNER/php-production:latest
-          docker push $REGISTRY/$REPO_OWNER/nginx-production:$TAG
-          docker push $REGISTRY/$REPO_OWNER/nginx-production:latest
+      - name: Build and push nginx
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/nginx/Dockerfile
+          push: true
+          tags: ghcr.io/${{ env.REPO_OWNER }}/nginx-production:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Deploy to Coolify
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl -X GET "${{ secrets.COOLIFY_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
