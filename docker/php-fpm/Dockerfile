@@ -86,7 +86,6 @@ RUN chmod +x /usr/local/bin/entrypoint.common.sh
 
 USER fpm
 ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 9000
 CMD ["php-fpm"]
 
 FROM base AS production
@@ -145,6 +144,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.common.sh
 
 USER fpm
-# ENTRYPOINT ["entrypoint.sh"]
-# EXPOSE 9000
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]

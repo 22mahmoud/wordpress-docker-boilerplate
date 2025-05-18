@@ -4,30 +4,31 @@ MAX_RETRIES=20
 RETRY_DELAY=1
 
 # Wait for Database
-# for attempt in $(seq 1 $MAX_RETRIES); do
-#   if wp db check >/dev/null 2>&1; then
-#     echo "✅ Database is ready!"
-#     break
-#   fi
-#   echo "⏳ Waiting for Database... ($attempt/$MAX_RETRIES)"
-#   if [ "$attempt" -eq "$MAX_RETRIES" ]; then
-#     echo "❌ Database not available after $MAX_RETRIES attempts. Exiting."
-#     exit 1
-#   fi
-#   sleep "$RETRY_DELAY"
-# done
+for attempt in $(seq 1 $MAX_RETRIES); do
+  if wp db check >/dev/null 2>&1; then
+    echo "✅ Database is ready!"
+    break
+  fi
+  echo "⏳ Waiting for Database... ($attempt/$MAX_RETRIES)"
+  if [ "$attempt" -eq "$MAX_RETRIES" ]; then
+    echo "❌ Database not available after $MAX_RETRIES attempts. Exiting."
+    exit 1
+  fi
+  sleep "$RETRY_DELAY"
+done
 
 # Install WP if not yet installed
-for attempt in $(seq 1 $MAX_RETRIES); do
-  if wp core is-installed >/dev/null 2>&1 || wp core install --url="$WP_HOME" \
+if ! wp core is-installed; then
+  echo "🚀 Installing WordPress..."
+  wp core install \
+    --url="$WP_HOME" \
     --title="$WP_TITLE" \
     --admin_user="$WP_USER" \
     --admin_password="$WP_PASSWORD" \
-    --admin_email="$WP_EMAIL"; then
-    echo "✅ WordPress is ready!"
-    break
-  fi
-done
+    --admin_email="$WP_EMAIL"
+else
+  echo "🚀 WordPress already installed..."
+fi
 
 echo "🔌 Activating all plugins (excluding: $DISABLE_PLUGINS)..."
 wp plugin activate --all --exclude="$DISABLE_PLUGINS"
