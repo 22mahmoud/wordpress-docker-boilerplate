@@ -133,7 +133,7 @@ RUN composer dump-autoload -o \
 COPY --from=ghcr.io/22mahmoud/frontend-final:latest /app/web/app/themes/skin/dist /var/www/web/app/themes/skin/dist/
 COPY --from=ghcr.io/22mahmoud/frontend-final:latest /app/web/app/plugins/blocks/build /var/www/web/app/plugins/blocks/build/
 
-RUN mkdir -p /var/www/web/app/uploads && chown -R fpm:fpm /var/www/web/app/uploads
+RUN mkdir -p /var/www/web/app/uploads
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/zz-php-conf.ini
@@ -142,6 +142,8 @@ COPY docker/php-fpm/entrypoint.prod.sh /usr/local/bin/entrypoint.sh
 COPY docker/php-fpm/entrypoint.common.sh /usr/local/bin/entrypoint.common.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.common.sh
+
+RUN chown -R fpm:fpm .
 
 USER fpm
 ENTRYPOINT ["entrypoint.sh"]
