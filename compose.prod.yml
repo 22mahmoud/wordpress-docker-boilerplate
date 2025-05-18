@@ -16,9 +16,8 @@ services:
     image: ghcr.io/22mahmoud/php-production:latest
     volumes:
       - wp_uploads:/var/www/web/app/uploads
+      - .env:/var/www/.env
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -85,7 +84,7 @@ services:
   mariadb:
     image: yobasystems/alpine-mariadb:latest
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_NAME}
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
