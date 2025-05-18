@@ -1,8 +1,6 @@
 services:
   nginx:
     image: ghcr.io/22mahmoud/nginx-production:latest
-    ports:
-      - 8080:8080
     networks:
       - wp-prod
     volumes:
