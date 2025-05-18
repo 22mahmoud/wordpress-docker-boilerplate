@@ -16,7 +16,6 @@ services:
     image: ghcr.io/22mahmoud/php-production:latest
     volumes:
       - wp_uploads:/var/www/web/app/uploads
-      - .env:/var/www/.env
     restart: unless-stopped
     environment:
       DB_NAME: ${DB_NAME}
