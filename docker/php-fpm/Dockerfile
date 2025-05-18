@@ -146,5 +146,5 @@ RUN chmod +x /usr/local/bin/entrypoint.common.sh
 
 USER fpm
 # ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 9000
+# EXPOSE 9000
 CMD ["php-fpm"]
