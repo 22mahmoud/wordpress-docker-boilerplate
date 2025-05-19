@@ -6,8 +6,6 @@ services:
     volumes:
       - wp_uploads:/var/www/web/app/uploads:ro
     restart: unless-stopped
-    environment:
-      - SERVICE_FQDN_NGINX_8080
     depends_on:
       php-fpm:
         condition: service_healthy
