@@ -46,7 +46,8 @@
     "roots/bedrock-disallow-indexing": "^2.0",
     "roots/wordpress": "6.8.1",
     "roots/wp-config": "1.0.0",
-    "wpackagist-plugin/redis-cache": "^2.5"
+    "wpackagist-plugin/redis-cache": "^2.5",
+    "humanmade/s3-uploads": "^3.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

@@ -20,7 +20,6 @@ services:
     volumes:
       - .:/var/www
       - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
-      - wp_uploads:/var/www/web/app/uploads:ro
     ports:
       - 8080:80
     networks:
@@ -39,7 +38,6 @@ services:
         - "GID=${GID:-1000}"
     volumes:
       - .:/var/www
-      - wp_uploads:/var/www/web/app/uploads
     env_file:
       - .env
     healthcheck:
@@ -108,12 +106,11 @@ services:
     <<: *node
     command: sh -c "pnpm install && pnpm run -r start"
     ports:
-      - "5173:5173"
+      - "5173:5173" # skin theme vite port
 
 volumes:
   db_data:
   redis_data:
-  wp_uploads:
 
 networks:
   wp-dev:

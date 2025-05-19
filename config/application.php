@@ -74,6 +74,17 @@ Config::define('WP_HOME', env('WP_HOME'));
 Config::define('WP_SITEURL', env('WP_SITEURL'));
 
 /**
+ * S3
+ */
+Config::define('S3_UPLOADS_BUCKET', env('S3_UPLOADS_BUCKET'));
+Config::define('S3_UPLOADS_REGION', env('S3_UPLOADS_REGION'));
+Config::define('S3_UPLOADS_KEY', env('S3_UPLOADS_KEY'));
+Config::define('S3_UPLOADS_SECRET', env('S3_UPLOADS_SECRET'));
+Config::define('S3_UPLOADS_ENDPOINT', env('S3_UPLOADS_ENDPOINT'));
+Config::define('S3_UPLOADS_BUCKET_URL', env('S3_UPLOADS_BUCKET_URL'));
+Config::define('S3_UPLOADS_OBJECT_ACL', env('S3_UPLOADS_OBJECT_ACL'));
+
+/**
  * Custom Content Directory
  */
 Config::define('CONTENT_DIR', '/app');
