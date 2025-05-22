@@ -28,11 +28,12 @@ FROM base AS builder
 
 RUN apk add --no-cache --virtual .build-deps \
   $PHPIZE_DEPS \
-  # gd support
+  # gd & imagemagick support
   libjpeg-turbo-dev \
   libpng-dev \
   libwebp-dev \
   freetype-dev \
+  imagemagick-dev \
   \
   # Essentials
   libzip-dev \
@@ -65,6 +66,10 @@ RUN apk add --no-cache --virtual .build-deps \
   # phpredis
   && pecl install redis \
   && docker-php-ext-enable redis \
+  \
+  # Install imagick PHP extension
+  && pecl install imagick \
+  && docker-php-ext-enable imagick \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 
@@ -105,6 +110,7 @@ RUN apk add --no-cache \
   openssl \
   mysql \
   mysql-client \
+  imagemagick \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 

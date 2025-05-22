@@ -11,8 +11,13 @@
   <exclude-pattern>web/wp/</exclude-pattern>
   <exclude-pattern>web/index.php</exclude-pattern>
   <exclude-pattern>web/wp-config.php</exclude-pattern>
+  <exclude-pattern>web/app/object-cache.php</exclude-pattern>
   <exclude-pattern>web/app/mu-plugins/bedrock-autoloader.php</exclude-pattern>
   <exclude-pattern>web/app/mu-plugins/bedrock-disallow-indexing/</exclude-pattern>
+  <exclude-pattern>web/app/plugins/blocks/build/</exclude-pattern>
+  <exclude-pattern>web/app/plugins/query-monitor/</exclude-pattern>
+  <exclude-pattern>web/app/plugins/redis-cache/</exclude-pattern>
+  <exclude-pattern>web/app/plugins/s3-uploads/</exclude-pattern>
   <exclude-pattern>web/app/themes/twentytwentyfive/</exclude-pattern>
 
   <exclude-pattern>*/vendor/*</exclude-pattern>

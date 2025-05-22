@@ -22,11 +22,11 @@ services:
       - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8080:80
-    networks:
-      - wp-dev
     depends_on:
       php-fpm:
         condition: service_healthy
+    networks:
+      - wp-dev
 
   php-fpm:
     build:
@@ -50,6 +50,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - wp-dev
 
@@ -62,14 +64,14 @@ services:
       MARIADB_PASSWORD: db
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - wp-dev
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-pdb"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - wp-dev
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -84,11 +86,8 @@ services:
 
   redis:
     image: redis:8.0-alpine
-    restart: unless-stopped
     volumes:
       - redis_data:/data
-    networks:
-      - wp-dev
     command: ["redis-server", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -96,6 +95,27 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    networks:
+      - wp-dev
+
+  minio:
+    image: quay.io/minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - wp-dev
 
   node:
     <<: *node
@@ -111,6 +131,7 @@ services:
 volumes:
   db_data:
   redis_data:
+  minio_data:
 
 networks:
   wp-dev:
