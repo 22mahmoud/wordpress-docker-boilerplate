@@ -19,6 +19,7 @@
   <exclude-pattern>web/app/plugins/redis-cache/</exclude-pattern>
   <exclude-pattern>web/app/plugins/s3-uploads/</exclude-pattern>
   <exclude-pattern>web/app/themes/twentytwentyfive/</exclude-pattern>
+  <exclude-pattern>web/app/db.php</exclude-pattern>
 
   <exclude-pattern>*/vendor/*</exclude-pattern>
   <exclude-pattern>*/node_modules/*</exclude-pattern>
@@ -27,6 +28,10 @@
 
 
   <rule ref="PSR12">
-    <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+    <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+  </rule>
+
+  <rule ref="Squiz.NamingConventions.ValidVariableName.NotCamelCaps">
+    <exclude-pattern>config/application.php</exclude-pattern>
   </rule>
 </ruleset>

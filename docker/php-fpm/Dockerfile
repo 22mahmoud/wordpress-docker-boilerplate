@@ -34,6 +34,7 @@ RUN apk add --no-cache --virtual .build-deps \
   libwebp-dev \
   freetype-dev \
   imagemagick-dev \
+  libavif-dev \
   \
   # Essentials
   libzip-dev \
@@ -51,7 +52,7 @@ RUN apk add --no-cache --virtual .build-deps \
   icu-dev \
   \
   # Configure and install PHP extensions
-  && docker-php-ext-configure gd --with-jpeg --with-webp \
+  && docker-php-ext-configure gd --with-jpeg --with-webp --with-avif \
   && docker-php-ext-install -j "$(nproc)" \
   bcmath \
   exif \
@@ -111,6 +112,7 @@ RUN apk add --no-cache \
   mysql \
   mysql-client \
   imagemagick \
+  libavif \
   \
   && rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
 

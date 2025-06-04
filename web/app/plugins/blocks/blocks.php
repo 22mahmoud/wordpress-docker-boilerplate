@@ -29,9 +29,9 @@ function wp_blocks_block_init()
         wp_register_block_metadata_collection(__DIR__ . '/build', __DIR__ . '/build/blocks-manifest.php');
     }
 
-    $manifest_data = require __DIR__ . '/build/blocks-manifest.php';
-    foreach (array_keys($manifest_data) as $block_type) {
-        register_block_type(__DIR__ . "/build/{$block_type}");
+    $manifestData = require __DIR__ . '/build/blocks-manifest.php';
+    foreach (array_keys($manifestData) as $blockType) {
+        register_block_type(__DIR__ . "/build/{$blockType}");
     }
 }
 

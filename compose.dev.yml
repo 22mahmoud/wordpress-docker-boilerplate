@@ -99,7 +99,7 @@ services:
       - wp-dev
 
   minio:
-    image: quay.io/minio/minio
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
     ports:
       - "9000:9000"
       - "9001:9001"
