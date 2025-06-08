@@ -4,8 +4,8 @@ namespace WP\Skin\Includes;
 
 class Theme
 {
-    private static ?Theme $instance = null;
-    private ?Vite $vite = null;
+    private static Theme $instance;
+    private Vite $vite;
 
     private function __construct()
     {
@@ -34,7 +34,6 @@ class Theme
 
     public static function init(): Theme
     {
-        self::$instance ??= new self();
-        return self::$instance;
+        return self::$instance ??= new self();
     }
 }

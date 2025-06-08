@@ -7,10 +7,13 @@ web/app/upgrade
 web/app/uploads/*
 !web/app/uploads/.gitkeep
 !web/app/plugins/blocks
-!web/app/plugins/modern-image-formats
+!web/app/plugins/next-gen-image
 web/app/cache/*
 web/app/db.php
 web/app/object-cache.php
+
+# phpstan
+.cache
 
 # WordPress
 web/wp

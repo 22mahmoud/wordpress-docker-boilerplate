@@ -1,0 +1,13 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 9
+    paths:
+        - web/app/plugins/next-gen-image/src
+        - web/app/themes/skin/
+    scanDirectories:
+      - config
+    checkMissingTypehints: true
+    checkUnionTypes: true
+    checkExplicitMixed: true

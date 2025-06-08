@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace WP\Skin\Includes;
 
-use function Env\env;
-
 class Vite
 {
     private string $distUrl;
@@ -62,6 +60,7 @@ class Vite
 
 
         $manifest = json_decode($manifestJson, true);
+
         if (!isset($manifest[$this->entry])) {
             error_log('Invalid or missing entry in Vite manifest: ' . $this->entry);
             return;

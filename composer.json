@@ -23,11 +23,13 @@
   ],
   "scripts": {
     "lint": "phpcs",
-    "lint:fix": "phpcbf"
+    "lint:fix": "phpcbf",
+    "phpstan": ["phpstan analyse --memory-limit=2048M"]
   },
   "autoload": {
     "psr-4": {
-      "WP\\Skin\\": "web/app/themes/skin/src/"
+      "WP\\Skin\\": "web/app/themes/skin/src/",
+      "WP\\NextGenImagePlugin\\": "web/app/plugins/next-gen-image/src"
     }
   },
   "repositories": [
@@ -52,7 +54,9 @@
   "require-dev": {
     "roave/security-advisories": "dev-latest",
     "squizlabs/php_codesniffer": "*",
-    "wpackagist-plugin/query-monitor": "^3.17"
+    "wpackagist-plugin/query-monitor": "^3.17",
+    "phpstan/phpstan": "^2.1",
+    "szepeviktor/phpstan-wordpress": "^2.0"
   },
   "config": {
     "optimize-autoloader": true,
